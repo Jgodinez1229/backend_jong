@@ -8,11 +8,6 @@ const cors_1 = __importDefault(require("cors"));
 const morgan_1 = __importDefault(require("morgan"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const authRoutes_1 = __importDefault(require("./routes/authRoutes"));
-/*
-* Clase de inicio de nuestra aplicación NodeJsExpress
-* Autor: Gabriel Barrón Rodríguez
-* Fecha: 23 Junio 2024
-*/
 class Server {
     //Inicializa clase
     constructor() {

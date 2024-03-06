@@ -5,11 +5,7 @@ import bodyParser from 'body-parser';
 
 
 import authRoutes from './routes/authRoutes';
-/*
-* Clase de inicio de nuestra aplicación NodeJsExpress
-* Autor: Gabriel Barrón Rodríguez
-* Fecha: 23 Junio 2024
-*/
+
 class Server {
     private app: Application;
 
