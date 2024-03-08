@@ -20,15 +20,17 @@ class AuthController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { email, password } = req.body;
-                const lstUsers = yield authModelo_1.default.getuserByEmail(email);
-                // verificar que los datos no esten vacios
-                if (validator_1.default.isEmpty(email.trim()) ||
-                    validator_1.default.isEmpty(password.trim())) {
-                    if (lstUsers.length <= 0) {
-                        return res.status(404).json({ message: "El usuario y/o contraseña es incorrecto", code: 1 });
-                    }
-                    return res.json({ message: "Autenticación correcta", code: 0 });
+                // Verificar que los datos no estén vacíos
+                if (validator_1.default.isEmpty(email.trim()) || validator_1.default.isEmpty(password.trim())) {
+                    return res.status(400).json({ message: "El email y/o contraseña están vacíos" });
                 }
+                const lstUsers = yield authModelo_1.default.getuserByEmail(email);
+                // Verificar si el usuario existe en la base de datos
+                if (lstUsers.length <= 0) {
+                    return res.status(404).json({ message: "El usuario y/o contraseña es incorrecto", code: 1 });
+                }
+                // Verificar la contraseña (agregar lógica de verificación de contraseña aquí si es necesario)
+                return res.json({ message: "Autenticación correcta", code: 0 });
             }
             catch (error) {
                 return res.status(500).json({ message: `${error.message}` });

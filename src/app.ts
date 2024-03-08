@@ -2,7 +2,7 @@ import express, { Application } from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
-
+import usuarioRoutes from './routes/usuarioRoutes';
 
 import authRoutes from './routes/authRoutes';
 
@@ -44,6 +44,7 @@ class Server {
 
     //Configura las rutas
     routes() {
+        this.app.use('/usuario',usuarioRoutes)
         this.app.use("/", authRoutes);
     }
 }
