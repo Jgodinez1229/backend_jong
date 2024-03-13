@@ -8,10 +8,10 @@ class UsuarioRoutes {
         this.config();
     }
     config() {
-        this.router.get('/', usuarioController_1.usuarioController.list);
-        this.router.post('/', usuarioController_1.usuarioController.add);
-        this.router.put('/', usuarioController_1.usuarioController.update);
-        this.router.delete('/', usuarioController_1.usuarioController.delete);
+        this.router.get("/", usuarioController_1.usuarioController.list);
+        this.router.post("/", usuarioController_1.usuarioController.add);
+        this.router.put("/", usuarioController_1.usuarioController.update);
+        this.router.delete("/", usuarioController_1.usuarioController.delete);
     }
 }
 const usuarioRoutes = new UsuarioRoutes();
