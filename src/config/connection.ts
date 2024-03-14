@@ -1,6 +1,5 @@
 import mysql from 'promise-mysql';
 
-
 const pool = mysql.createPool({
     host: 'localhost',
     port: 3306,
@@ -8,4 +7,9 @@ const pool = mysql.createPool({
     password: 'root',
     database: 'apliweb'
 });
-export default pool;
+export default {
+    keys: {
+        secret:')(/&%$webintegral$#&/%'
+    },
+    database: pool
+};

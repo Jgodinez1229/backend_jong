@@ -1,35 +1,49 @@
 import { Request, Response } from "express";
 import validator from "validator";
 import model from "../models/usuarioModelo";
+import { utils } from "../utils/utils";
 
 class UsuarioController {
+
   public async list(req: Request, res: Response) {
     try {
-      // Obtener la lista de usuarios desde la base de datos
-      const users = await model.list();
-      // Devolver la lista de usuarios como respuesta
-      return res.json({ message: "Listado de Usuarios", users, code: 0 });
+        const users = await model.list();
+        return res.json({ message: "Listado de Usuario", code: 0, users });
     } catch (error: any) {
-      return res.status(500).json({ message: `${error.message}` });
+        return res.status(500).json({ message: `${error.message}` });
     }
   }
 
-
   public async add(req: Request, res: Response) {
     try {
-      const { email, password } = req.body;
+      // Extraer los datos del cuerpo de la solicitud
+      const { email, password, role } = req.body;
 
-      // Verificar si el email ya está en uso
-      const existingUser = await model.getUserByEmail(email);
-      if (existingUser.length > 0) {
-        return res.status(400).json({ message: "El correo electrónico ya está en uso" });
+      // Verificar que los campos no estén vacíos
+      if (!email || !password || !role) {
+        return res.status(400).json({ message: "Todos los campos son requeridos", code: 400 });
       }
 
-      // Si el email no está en uso, proceder a agregar el nuevo usuario
-      // Agregar el nuevo usuario a la base de datos
-      // Aquí deberías agregar la lógica para agregar el usuario a tu base de datos
-      // y luego enviar una respuesta de éxito
-      return res.json({ message: "Agregar Usuario", code: 0 });
+      // Verificar que el email sea válido
+      if (!validator.isEmail(email)) {
+        return res.status(400).json({ message: "Email inválido", code: 400 });
+      }
+
+      // Verificar si ya existe un usuario con ese email
+      const existingUser = await model.listByEmail(email);
+      if (existingUser.length > 0) {
+        return res.status(400).json({ message: "Ya existe un usuario con ese email", code: 400 });
+      }
+
+      // Encriptar la contraseña
+      const encryptedPassword = await utils.hashPassword(password);
+
+      // Crear el usuario
+      const user = { email, password: encryptedPassword, role };
+      await model.add(user);
+
+      return res.json({ message: "Se agregó el usuario correctamente", code: 0 });
+
     } catch (error: any) {
       return res.status(500).json({ message: `${error.message}` });
     }
@@ -37,19 +51,29 @@ class UsuarioController {
 
   public async update(req: Request, res: Response) {
     try {
-      const { email, password } = req.body;
+      // Extraer los datos del cuerpo de la solicitud
+      const { email, password, role } = req.body;
 
-      // Verificar si el usuario existe
-      const existingUser = await model.getUserByEmail(email);
-      if (existingUser.length === 0) {
-        return res.status(404).json({ message: "El usuario no existe" });
+      // Verificar que los campos no estén vacíos
+      if (!email || !password || !role) {
+        return res.status(400).json({ message: "Todos los campos son requeridos", code: 400 });
       }
 
-      // Si el usuario existe, proceder con la actualización
-      // Lógica para actualizar el usuario en la base de datos
-      // ...
+      // Verificar si el usuario existe
+      const existingUser = await model.listByEmail(email);
+      if (existingUser.length === 0) {
+        return res.status(404).json({ message: "Usuario no encontrado", code: 404 });
+      }
 
-      return res.json({ message: "Usuario actualizado correctamente" });
+      // Encriptar la contraseña
+      const encryptedPassword = await utils.hashPassword(password);
+
+      // Actualizar la contraseña del usuario
+      const updatedUser = { email, password: encryptedPassword, role };
+      await model.update(updatedUser);
+
+      return res.json({ message: "Se modificó el usuario correctamente", code: 0 });
+
     } catch (error: any) {
       return res.status(500).json({ message: `${error.message}` });
     }
@@ -60,16 +84,15 @@ class UsuarioController {
       const { email } = req.body;
 
       // Verificar si el usuario existe
-      const existingUser = await model.getUserByEmail(email);
+      const existingUser = await model.listByEmail(email);
       if (existingUser.length === 0) {
-        return res.status(404).json({ message: "El usuario no existe" });
+        return res.status(404).json({ message: "Usuario no encontrado", code: 404 });
       }
 
-      // Si el usuario existe, proceder con la eliminación
-      // Lógica para eliminar el usuario de la base de datos
-      // ...
+      // Eliminar el usuario
+      await model.delete(email);
 
-      return res.json({ message: "Usuario eliminado correctamente" });
+      return res.json({ message: "Eliminación de Usuario", code: 0 });
     } catch (error: any) {
       return res.status(500).json({ message: `${error.message}` });
     }

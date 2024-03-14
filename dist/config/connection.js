@@ -11,5 +11,10 @@ const pool = promise_mysql_1.default.createPool({
     password: 'root',
     database: 'apliweb'
 });
-exports.default = pool;
+exports.default = {
+    keys: {
+        secret: ')(/&%$webintegral$#&/%'
+    },
+    database: pool
+};
 //# sourceMappingURL=connection.js.map
